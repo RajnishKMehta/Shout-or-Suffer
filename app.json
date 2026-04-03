@@ -15,6 +15,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.rajnishkmehta.shoutorsuffer",
       "adaptiveIcon": {
         "backgroundColor": "#242729",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
