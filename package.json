@@ -1,7 +1,28 @@
 {
-  "name": "usefull-app",
+  "name": "shout-or-suffer",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "description": "A chaotic React Native app where the only way to stop the madness is to scream.",
+  "author": {
+  "name": "Rajnish Mehta",
+  "email": "RajnishKMehta@proton.me",
+  "url": "https://github.com/RajnishKMehta"
+},
+  "license": "MIT",
+  "homepage": "https://github.com/RajnishKMehta/Shout-or-Suffer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RajnishKMehta/Shout-or-Suffer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RajnishKMehta/Shout-or-Suffer/issues"
+  },
+  "keywords": [
+    "shout or suffer",
+    "shout-or-suffer",
+    "prank app",
+    "fun"
+  ],
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
