@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "usefull App",
-    "slug": "usefull-app",
+    "name": "Shout or Sufferr",
+    "slug": "shout-or-suffer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "usefull",
+    "scheme": ["useless", "Shoutorsuffer"],
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -23,7 +23,7 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/icon.png"
     },
     "plugins": [
       "expo-router",
