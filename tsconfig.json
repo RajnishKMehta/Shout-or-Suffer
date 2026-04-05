@@ -2,10 +2,20 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"],
+
+      "@assets/*": ["assets/*"],
+      "@img/*": ["assets/images/*"],
+      "@audio/*": ["assets/audio/*"],
+
+      "@lib/*": ["src/lib/*"],
+      "@cmp/*": ["src/components/*"],
+      "@stylez": ["src/stylez/index.ts"],
+      "@stylez/*": ["src/stylez/*"],
+
+      "@app/*": ["app/*"]
     }
   },
   "include": [

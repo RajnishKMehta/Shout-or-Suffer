@@ -1,4 +1,4 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# ─── FROM .gitignore (required — EAS ignores .gitignore when .easignore exists) ───
 
 # dependencies
 node_modules/
@@ -45,3 +45,25 @@ replit.md
 
 # typescript
 *.tsbuildinfo
+
+# ─── EAS BUILD — EXTRA IGNORES ────
+
+# Docs, scripts, coverage
+LICENSE
+/docs
+/coverage
+/scripts
+
+
+# Editor & IDE config
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.gitignore
+.git/
+
+# OS junk
+Thumbs.db
