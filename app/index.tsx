@@ -72,7 +72,7 @@ export default function PermissionGate() {
     if (areRequiredPermissionsGranted(requiredStatuses)) {
       const savedName = Storage.getString('name');
       if (savedName && savedName.trim().length > 5) {
-        router.replace('/home');
+        router.replace('/main');
       } else {
         router.replace('/login');
       }

@@ -9,6 +9,7 @@
       "@assets/*": ["assets/*"],
       "@img/*": ["assets/images/*"],
       "@audio/*": ["assets/audio/*"],
+      "@video/*": ["assets/video/*"],
 
       "@lib/*": ["src/lib/*"],
       "@cmp/*": ["src/components/*"],

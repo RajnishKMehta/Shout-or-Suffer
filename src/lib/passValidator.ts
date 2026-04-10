@@ -8,19 +8,26 @@ export function validatePassword(password: string): ValidationResult {
     return { success: false, msg: 'Password cannot be empty.' };
   }
 
-  if (password === 'paSSword') {
+  if (password === 'PassW0RD') {
     return { success: true };
   }
   if (password === 'password') {
-    return { success: false, msg: 'password is tooo correct please enter paSSword'}
+    return { success: false, msg: 'password is tooo correct please enter PassW0RD'}
   }
-  if (password === 'Password') {
-    return { success: false, msg: 'Password is some-some correct 🤏 please enter paSSword'}
+  if (password === 'PassWord') {
+    return { success: false, msg: 'Password is some-some correct 🤏 please enter PassW0RD'}
   }
-  if (password === 'PaSSword') {
+  if (password === 'PassW0rd') {
     return {
       success: false,
-      msg: 'PaSSword is Toooo much correct 💥 please enter paSSword'
+      msg: 'PassW0rd is Toooo much correct 💥 please enter PassW0RD'
+    }
+  }
+  const numPass = ['123', '1234', '12345', '123456', '0000'];
+  if (numPass.includes(password)) {
+    return {
+      success: false,
+      msg: 'you are genius 👾'
     }
   }
 
