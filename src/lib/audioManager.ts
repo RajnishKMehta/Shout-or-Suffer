@@ -74,7 +74,7 @@ export function isSoundPlaying(): boolean {
   return currentPlayer?.playing ?? false;
 }
 
-export async function restartCurrentSound(): Promise<void> {
+export async function restartAudio(): Promise<void> {
   if (currentPlayer) {
     try {
       currentPlayer.seekTo(0);
