@@ -23,6 +23,7 @@
     },
     "android": {
       "package": "com.rajnishkmehta.scream2wish",
+      "minSdkVersion": 29,
       "adaptiveIcon": {
         "backgroundColor": "#242729",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
