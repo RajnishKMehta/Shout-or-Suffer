@@ -1,6 +1,6 @@
 export const Colors = {
   bg: {
-    base: '#0a0a0a',
+    base: '#010201',
     card: '#111111',
     surface: '#141414',
     elevated: '#1a1a1a',

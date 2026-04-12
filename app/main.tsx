@@ -8,7 +8,7 @@ import { startScreamDetection, stopScreamDetection } from '@lib/screamManager';
 import { ImageOverlay } from '@cmp/ImageOverlay';
 import { Colors, MainStyles } from '@stylez';
 
-type Phase = 'init' | 'countdown' | 'intro' | 'prompt' | 'active' | 'complete';
+type Phase = 'init' | 'countdown' | 'active' | 'complete';
 type LampStage = 'normal' | 'breaking' | 'broken55' | 'broken100';
 
 const LAMP_NORMAL     = require('@img/in/ginie_lamp.png');
@@ -22,7 +22,6 @@ const IMG_RED_MERMAID  = require('@img/in/red_mermaid.png');
 const RESET_PHRASES = [
   "You stopped! Scream again to continue!",
   "Don't give up! Keep screaming!",
-  "So close! Scream louder!",
 ];
 
 const IDLE_PHRASES = [
@@ -59,7 +58,7 @@ function randomFrom(arr: string[]): string {
 
 export default function MainScreen() {
   const [phase, setPhase] = useState<Phase>('init');
-  const [countdown, setCountdown] = useState(3);
+  const [countdown, setCountdown] = useState(5);
   const [lampStage, setLampStage] = useState<LampStage>('normal');
   const [amplitude, setAmplitude] = useState(0);
   const [showCharacter, setShowCharacter] = useState(false);
@@ -75,7 +74,6 @@ export default function MainScreen() {
   const lampOffsetAnim = useRef(new Animated.Value(0)).current;
   const characterAnim  = useRef(new Animated.Value(0)).current;
 
-  // ── Block back button for the entire screen ───────────────────────────────
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (Platform.OS === 'android') {
@@ -85,8 +83,7 @@ export default function MainScreen() {
     });
     return () => sub.remove();
   }, []);
-
-  // ── Init: check name, pick outcome, then start countdown ──────────────────
+  
   useEffect(() => {
     const name = Storage.getString('name');
     if (!name) {
@@ -102,48 +99,29 @@ export default function MainScreen() {
     const t = setTimeout(() => setPhase('countdown'), 600);
     return () => clearTimeout(t);
   }, []);
-
-  // ── Countdown: 3 → 2 → 1 → 0, then speak intro ───────────────────────────
+  
   useEffect(() => {
     if (phase !== 'countdown') return;
-    setCountdown(3);
-    let n = 3;
+    setCountdown(5);
+    let n = 5;
+    speak('Scream to release the genie.');
     const iv = setInterval(() => {
       n -= 1;
       setCountdown(n);
       if (n <= 0) {
         clearInterval(iv);
-        setPhase('intro');
+        setPhase('active');
       }
     }, 1000);
     return () => clearInterval(iv);
   }, [phase]);
-
-  // ── Intro speech: "Scream to release the genie." ──────────────────────────
-  useEffect(() => {
-    if (phase !== 'intro') return;
-    speak('Scream to release the genie.', {
-      onDone: () => setPhase('prompt'),
-    });
-  }, [phase]);
-
-  // ── Prompt: deep scary "Scream, {name}" ───────────────────────────────────
-  useEffect(() => {
-    if (phase !== 'prompt') return;
-    speak(`Scream, ${userNameRef.current}`, {
-      pitch: 0.65,
-      rate: 0.75,
-      onDone: () => setPhase('active'),
-    });
-  }, [phase]);
-
-  // ── Idle reminder: if user hasn't screamed after 5s, prompt them ──────────
+  
   const scheduleIdleReminder = useCallback(() => {
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     idleTimerRef.current = setTimeout(() => {
       if (!hasScreamedRef.current) {
         speak(randomFrom(IDLE_PHRASES));
-        // Schedule another reminder after 8s if still idle
+        
         idleTimerRef.current = setTimeout(() => {
           if (!hasScreamedRef.current) {
             speak(randomFrom(IDLE_PHRASES));
@@ -153,7 +131,7 @@ export default function MainScreen() {
     }, 5000);
   }, []);
 
-  // ── Scream complete → reveal character → navigate ─────────────────────────
+  
   const handleComplete = useCallback(() => {
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     stopScreamDetection();
@@ -179,14 +157,14 @@ export default function MainScreen() {
 
       setTimeout(() => {
         speak(
-          'Congratulations, you have received something. Now make your wish.',
+          'Congratulations, you\'ve released someone. Now make your wish.',
           { onDone: () => router.replace('/end') }
         );
-      }, 1000);
+      }, 1500);
     }, 600);
   }, [lampOffsetAnim, characterAnim]);
 
-  // ── Progress handler: lamp image changes + milestone speech ───────────────
+  
   const handleProgressChange = useCallback((progress: number) => {
     if (progress > 0) hadProgressRef.current = true;
 
@@ -211,7 +189,7 @@ export default function MainScreen() {
     }
   }, []);
 
-  // ── Reset speech: speak when user stops after making progress ─────────────
+  
   const handleReset = useCallback(() => {
     if (hadProgressRef.current) {
       speak(randomFrom(RESET_PHRASES));
@@ -221,7 +199,7 @@ export default function MainScreen() {
     scheduleIdleReminder();
   }, [scheduleIdleReminder]);
 
-  // ── Active phase: start mic + vibration ───────────────────────────────────
+  
   useEffect(() => {
     if (phase !== 'active') return;
 
@@ -250,7 +228,7 @@ export default function MainScreen() {
     };
   }, [phase, handleProgressChange, handleComplete, handleReset, scheduleIdleReminder]);
 
-  // ── Global cleanup on unmount ─────────────────────────────────────────────
+  
   useEffect(() => {
     return () => {
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
@@ -265,7 +243,7 @@ export default function MainScreen() {
     outputRange: [0, 90],
   });
 
-  // ── Render: non-active phases ─────────────────────────────────────────────
+  
   if (phase === 'init') {
     return <View style={MainStyles.screen} />;
   }
@@ -278,27 +256,8 @@ export default function MainScreen() {
     );
   }
 
-  if (phase === 'intro') {
-    return (
-      <View style={MainStyles.centeredScreen}>
-        <Text style={MainStyles.introText}>
-          Scream to release{'\n'}the genie.
-        </Text>
-      </View>
-    );
-  }
 
-  if (phase === 'prompt') {
-    return (
-      <View style={MainStyles.centeredScreen}>
-        <Text style={MainStyles.promptText}>
-          Scream,{'\n'}{userNameRef.current}
-        </Text>
-      </View>
-    );
-  }
-
-  // ── Render: active + complete ─────────────────────────────────────────────
+  
   return (
     <View style={MainStyles.screen}>
 

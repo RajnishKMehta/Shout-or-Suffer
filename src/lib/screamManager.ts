@@ -10,11 +10,10 @@ export type ScreamCallbacks = {
   onReset?: () => void;
 };
 
-// ─── Timing config ──
-const MIN_COMPLETION_SECS = 30; // loudest scream finishes in this many seconds
-const MAX_COMPLETION_SECS = 50; // quietest qualifying scream finishes in this many seconds
+const MIN_COMPLETION_SECS = 20; // loudest scream finishes in this many seconds
+const MAX_COMPLETION_SECS = 35; // quietest qualifying scream finishes in this many seconds
 
-const DB_SILENCE = -48;
+const DB_SILENCE = -40;
 const DB_MAX = -3;
 
 // 0.5 ≈ -25 dBFS
@@ -23,7 +22,7 @@ const SCREAM_FLOOR = 0.5;
 const BASE_RATE = 100 / MAX_COMPLETION_SECS;
 const MAX_RATE  = 100 / MIN_COMPLETION_SECS;
 const POLL_MS   = 100;
-const RESET_SILENCE_MS = 900;
+const RESET_SILENCE_MS = 1150;
 
 let recorder: AudioRecorder | null = null;
 let pollTimer: ReturnType<typeof setInterval> | null = null;

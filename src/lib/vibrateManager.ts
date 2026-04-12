@@ -2,16 +2,15 @@ import { Vibration } from 'react-native';
 
 let vibrating = false;
 
-const DEFAULT_PATTERN = [0, 80, 60];
+const DEFAULT_PATTERN = [0, 400, 50];
 
 export function startVibration(pattern: number[] = DEFAULT_PATTERN): void {
-  if (vibrating) return;
+  Vibration.cancel();
   vibrating = true;
   Vibration.vibrate(pattern, true);
 }
 
 export function stopVibration(): void {
-  if (!vibrating) return;
   vibrating = false;
   Vibration.cancel();
 }

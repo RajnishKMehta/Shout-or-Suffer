@@ -56,7 +56,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Install pnpm
         run: npm i -g pnpm
@@ -95,6 +95,52 @@ jobs:
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
+      - name: Get latest release info
+        id: release_info
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          LATEST_TAG=$(gh release list --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
+
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No release found. Skipping release notes update."
+            echo "update_num=1" >> "$GITHUB_OUTPUT"
+            echo "latest_tag=" >> "$GITHUB_OUTPUT"
+          else
+            RELEASE_BODY=$(gh release view "$LATEST_TAG" --json body -q '.body' 2>/dev/null || echo "")
+
+            CURRENT_NUM=$(printf '%s' "$RELEASE_BODY" | perl -ne 'if (/update: \*\*#(\d+)\*\*/) { print $1; last }')
+
+            if [ -n "$CURRENT_NUM" ]; then
+              NEXT_NUM=$((CURRENT_NUM + 1))
+            else
+              NEXT_NUM=1
+            fi
+
+            echo "update_num=$NEXT_NUM" >> "$GITHUB_OUTPUT"
+            echo "latest_tag<<EOF" >> "$GITHUB_OUTPUT"
+            printf '%s\n' "$LATEST_TAG" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update release notes
+        if: steps.release_info.outputs.latest_tag != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          TAG='${{ steps.release_info.outputs.latest_tag }}'
+          UPDATE_NUM='${{ steps.release_info.outputs.update_num }}'
+          OTA_MSG='${{ steps.ota_msg.outputs.msg }}'
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+          NEW_BODY=$(printf 'Latest Update\n\n%s\n\nreleasedAt: %s\n\nupdate: **#%s**' "$OTA_MSG" "$TIMESTAMP" "$UPDATE_NUM")
+
+          gh release edit "$TAG" --notes "$NEW_BODY"
+
   build-apk:
     needs: setup
     if: needs.setup.outputs.should_build == 'true'
@@ -104,7 +150,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Install pnpm
         run: npm i -g pnpm@latest
