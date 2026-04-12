@@ -191,7 +191,7 @@ export default function MainScreen() {
 
   
   const handleReset = useCallback(() => {
-    if (hadProgressRef.current) {
+    if (hadProgressRef.current && milestone55Ref.current) {
       speak(randomFrom(RESET_PHRASES));
     }
     hadProgressRef.current = false;

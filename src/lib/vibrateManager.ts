@@ -1,28 +1,40 @@
 import { Vibration } from 'react-native';
 
-let vibrating = false;
+let active = false;
+let loopTimer: ReturnType<typeof setTimeout> | null = null;
 
-const DEFAULT_PATTERN = [0, 400, 50];
+const VIBRATE_MS = 400;
+const PAUSE_MS   = 150;
 
-export function startVibration(pattern: number[] = DEFAULT_PATTERN): void {
-  Vibration.cancel();
-  vibrating = true;
-  Vibration.vibrate(pattern, true);
+function loop(): void {
+  if (!active) return;
+  Vibration.vibrate(VIBRATE_MS);
+  loopTimer = setTimeout(loop, VIBRATE_MS + PAUSE_MS);
+}
+
+export function startVibration(): void {
+  if (active) return;
+  active = true;
+  loop();
 }
 
 export function stopVibration(): void {
-  vibrating = false;
+  active = false;
+  if (loopTimer) {
+    clearTimeout(loopTimer);
+    loopTimer = null;
+  }
   Vibration.cancel();
 }
 
 export function isVibrating(): boolean {
-  return vibrating;
+  return active;
 }
 
-export function toggleVibration(pattern?: number[]): void {
-  if (vibrating) {
+export function toggleVibration(): void {
+  if (active) {
     stopVibration();
   } else {
-    startVibration(pattern);
+    startVibration();
   }
 }
