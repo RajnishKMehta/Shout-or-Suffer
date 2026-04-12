@@ -1,0 +1,63 @@
+name: Wish Handler
+
+on:
+  repository_dispatch:
+    types:
+      - add-wish
+
+concurrency:
+  group: wish-handler
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  handle-wish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Validate required fields
+        run: |
+          set -euo pipefail
+
+          WISH='${{ github.event.client_payload.wish }}'
+          NOTE='${{ github.event.client_payload.note }}'
+          FROM='${{ github.event.client_payload.from }}'
+
+          if [ -z "$WISH" ] || [ -z "$NOTE" ] || [ -z "$FROM" ]; then
+            echo "Error: wish, note, and from are all required fields."
+            exit 1
+          fi
+
+          echo "All required fields are present."
+
+      - name: Create wish file and update index
+        env:
+          INPUT_WISH: ${{ github.event.client_payload.wish }}
+          INPUT_NOTE: ${{ github.event.client_payload.note }}
+          INPUT_FROM: ${{ github.event.client_payload.from }}
+        run: node scripts/createWishFile.js
+
+      - name: Commit and push changes
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git pull --rebase origin main
+
+          git add wishes/
+
+          git commit -m "wish: add new entry from ${{ github.event.client_payload.from }}"
+
+          git push origin main

@@ -1,29 +1,83 @@
-import {
-	env,
-	createExecutionContext,
-	waitOnExecutionContext,
-	SELF,
-} from "cloudflare:test";
-import { describe, it, expect } from "vitest";
-import worker from "../src/index";
+import { env, createExecutionContext, waitOnExecutionContext, SELF } from 'cloudflare:test';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+import worker from '../src/index';
 
-// For now, you'll need to do something like this to get a correctly-typed
-// `Request` to pass to `worker.fetch()`.
-const IncomingRequest = Request<unknown, IncomingRequestCfProperties>;
+describe('GitHub Action Trigger Worker Tests', () => {
 
-describe("Hello World worker", () => {
-	it("responds with Hello World! (unit style)", async () => {
-		const request = new IncomingRequest("http://example.com");
-		// Create an empty context to pass to `worker.fetch()`.
-		const ctx = createExecutionContext();
-		const response = await worker.fetch(request, env, ctx);
-		// Wait for all `Promise`s passed to `ctx.waitUntil()` to settle before running test assertions
-		await waitOnExecutionContext(ctx);
-		expect(await response.text()).toMatchInlineSnapshot(`"Hello World!"`);
+	// Mocking Global Fetch to prevent actual GitHub API calls during tests
+	beforeAll(() => {
+		global.fetch = vi.fn();
 	});
 
-	it("responds with Hello World! (integration style)", async () => {
-		const response = await SELF.fetch("https://example.com");
-		expect(await response.text()).toMatchInlineSnapshot(`"Hello World!"`);
+	it('should return 405 if method is not POST', async () => {
+		const request = new Request('http://localhost', { method: 'GET' });
+		const ctx = createExecutionContext();
+		const response = await worker.fetch(request, env, ctx);
+		await waitOnExecutionContext(ctx);
+
+		expect(response.status).toBe(405);
+		const body = await response.json();
+		expect(body).toHaveProperty('error', 'Method not allowed. Use POST.');
+	});
+
+	it('should return 401 if x-api-key is missing or invalid', async () => {
+		const request = new Request('http://localhost', {
+			method: 'POST',
+			headers: { 'x-api-key': 'wrong-key' },
+			body: JSON.stringify({ event_type: 'test' }),
+		});
+		const ctx = createExecutionContext();
+		const response = await worker.fetch(request, env, ctx);
+		await waitOnExecutionContext(ctx);
+
+		expect(response.status).toBe(401);
+		const body = await response.json();
+		expect(body).toHaveProperty('error', 'Unauthorized. Invalid or missing x-api-key.');
+	});
+
+	it('should return 400 if JSON body is invalid', async () => {
+		const request = new Request('http://localhost', {
+			method: 'POST',
+			headers: { 'x-api-key': env.API_KEY },
+			body: 'invalid-json',
+		});
+		const ctx = createExecutionContext();
+		const response = await worker.fetch(request, env, ctx);
+		await waitOnExecutionContext(ctx);
+
+		expect(response.status).toBe(400);
+		const body = await response.json();
+		expect(body).toHaveProperty('error', 'Invalid JSON body.');
+	});
+
+	it('should return 200 and trigger GitHub Action when everything is correct', async () => {
+		// Mocking a successful GitHub response
+		(global.fetch as any).mockResolvedValueOnce(new Response(JSON.stringify({}), { status: 204 }));
+
+		const payload = {
+			event_type: 'add-wish',
+			client_payload: {
+				wish: 'Happy Birthday!',
+				from: 'Ali'
+			}
+		};
+
+		const request = new Request('http://localhost', {
+			method: 'POST',
+			headers: { 
+				'x-api-key': env.API_KEY,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(payload),
+		});
+
+		const ctx = createExecutionContext();
+		const response = await worker.fetch(request, env, ctx);
+		await waitOnExecutionContext(ctx);
+
+		expect(response.status).toBe(200);
+		const body = await response.json();
+		expect(body).toHaveProperty('success', true);
+		expect(body).toHaveProperty('message', 'GitHub Action triggered successfully.');
 	});
 });

@@ -1,18 +1,59 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Bind resources to your worker in `wrangler.jsonc`. After adding bindings, a type definition for the
- * `Env` object can be regenerated with `npm run cf-typegen`.
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
-
 export default {
-	async fetch(request, env, ctx): Promise<Response> {
-		return new Response("Hello World!");
+	async fetch(request: Request, env: Env): Promise<Response> {
+		if (request.method !== 'POST') {
+			return new Response(JSON.stringify({ error: 'Method not allowed. Use POST.' }), {
+				status: 405,
+				headers: { 'Content-Type': 'application/json' },
+			});
+		}
+
+		const apiKey = request.headers.get('x-api-key');
+		if (!apiKey || apiKey !== env.API_KEY) {
+			return new Response(JSON.stringify({ error: 'Unauthorized. Invalid or missing x-api-key.' }), {
+				status: 401,
+				headers: { 'Content-Type': 'application/json' },
+			});
+		}
+
+		let body: unknown;
+		try {
+			body = await request.json();
+		} catch {
+			return new Response(JSON.stringify({ error: 'Invalid JSON body.' }), {
+				status: 400,
+				headers: { 'Content-Type': 'application/json' },
+			});
+		}
+
+		const githubResponse = await fetch('https://api.github.com/repos/RajnishKMehta/Scream2Wish-wishes/dispatches', {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+				Accept: 'application/vnd.github.v3+json',
+				'Content-Type': 'application/json',
+				'User-Agent': 'action-trigger-worker',
+			},
+			body: JSON.stringify(body),
+		});
+
+		if (!githubResponse.ok) {
+			const errorText = await githubResponse.text();
+			return new Response(
+				JSON.stringify({
+					error: 'Failed to trigger GitHub Action.',
+					github_status: githubResponse.status,
+					github_response: errorText,
+				}),
+				{
+					status: 502,
+					headers: { 'Content-Type': 'application/json' },
+				}
+			);
+		}
+
+		return new Response(JSON.stringify({ success: true, message: 'GitHub Action triggered successfully.' }), {
+			status: 200,
+			headers: { 'Content-Type': 'application/json' },
+		});
 	},
 } satisfies ExportedHandler<Env>;

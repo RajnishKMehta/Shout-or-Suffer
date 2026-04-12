@@ -38,6 +38,7 @@ yarn-error.*
 .config/
 .env*.local
 .local/
+wish-handler/
 
 # Replit config
 .replit
