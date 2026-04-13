@@ -2,7 +2,7 @@
 
 # 🧞 Scream2Wish
 
-**An Android app that makes you scream to make a wish — then sends it to the universe.**
+**An Android app that makes you scream to make a wish then sends it to the universe.**
 
 *A submission for the [DEV April Fools Challenge 2026](https://dev.to/challenges/aprilfools-2026)*
 
@@ -225,7 +225,7 @@ npx wrangler deploy
 
 The [DEV April Fools Challenge 2026](https://dev.to/challenges/aprilfools-2026) prompt was simple: build something completely useless or silly. Something that makes people ask *"why on earth did they build this?"*
 
-The answer here is: because it required a scream-detection algorithm, a Cloudflare Worker, a GitHub Actions pipeline, three different characters (two of which are mermaids coming out of a lamp), text-to-speech, real-time vibration feedback, fake login validation, OTA updates, and a public wishes board — all in service of letting someone type a wish into their phone.
+The answer here is: because it required a scream-detection algorithm, a Cloudflare Worker, a GitHub Actions pipeline, three different characters (two of which are mermaids coming out of a lamp), text-to-speech, real-time vibration feedback, fake login validation, OTA updates, and a public wishes board all in service of letting someone type a wish into their phone.
 
 It is overengineered on purpose. It is useless on purpose. And it absolutely works.
 
