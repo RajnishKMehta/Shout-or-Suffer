@@ -1,7 +1,7 @@
 {
   "name": "scream2wish",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A chaotic React Native app where the only way to stop the madness is to scream.",
   "author": {
     "name": "Rajnish Mehta",

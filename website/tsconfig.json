@@ -1,23 +1,40 @@
 {
   "compilerOptions": {
-    "target": "es2023",
-    "module": "esnext",
-    "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
-    "skipLibCheck": true,
+    /* Language */
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
 
-    /* Bundler mode */
+    /* Module */
+    "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    "noEmit": true,
 
-    /* Linting */
+    /* Paths */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@cmp/*": ["src/components/*"]
+      "@assets/*": ["src/assets/*"]
+    },
+
+    /* Types */
+    "types": ["vite/client"],
+
+    /* Strictness */
+    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    /* Bundler compatibility */
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+
+    /* Interop */
+    "skipLibCheck": true
   },
   "include": ["src"]
 }
