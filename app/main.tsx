@@ -170,8 +170,6 @@ export default function MainScreen() {
 
     if (progress === 0) {
       setLampStage('normal');
-      milestone25Ref.current = false;
-      milestone55Ref.current = false;
       startVibration();
       return;
     }
@@ -194,6 +192,8 @@ export default function MainScreen() {
     if (hadProgressRef.current && milestone55Ref.current) {
       speak(randomFrom(RESET_PHRASES));
     }
+    milestone25Ref.current = false;
+    milestone55Ref.current = false;
     hadProgressRef.current = false;
     hasScreamedRef.current = false;
     scheduleIdleReminder();
