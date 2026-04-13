@@ -1,12 +1,11 @@
 <div align="center">
 
-# 🧞 Scream2Wish
+# <img align="right" src="assets/images/splash-light.png" alt="blue mermaid" height="64" width="auto" />Scream2Wish<img align="left" src="assets/images/splash-dark.png" alt="red mermaid" height="64" width="auto" />
 
-**An Android app that makes you scream to make a wish then sends it to the universe.**
+<img align="center" src="assets/images/logo16x9.png" alt="Scream2Wish" height="54" width="auto" />
 
 *A submission for the [DEV April Fools Challenge 2026](https://dev.to/challenges/aprilfools-2026)*
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](./LICENSE)
 [![Platform: Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://github.com/RajnishKMehta/Scream2Wish/releases/latest)
 [![Built with Expo](https://img.shields.io/badge/Built%20with-Expo-000020?logo=expo)](https://expo.dev)
 [![Download APK](https://img.shields.io/badge/Download-APK-ef4444?logo=android)](https://github.com/RajnishKMehta/Scream2Wish/releases/latest)
@@ -19,11 +18,11 @@
 
 ## What Is This?
 
-Scream2Wish is a completely useless, mildly chaotic Android app that forces you to **scream as loud as you can** to break a genie's lamp — and only then lets you make a wish.
+Scream2Wish is a completely useless, mildly chaotic Android app that forces you to **scream as loud as you can** to break a genie's lamp and only then lets you make a wish.
 
 Your wish gets sent to the internet via a Cloudflare Worker → GitHub Actions pipeline and lives forever in a public repo. In return, you get to read a random stranger's note. Whether that's comforting or unsettling is entirely up to you.
 
-It solves zero real-world problems. It does exactly what it says. That's the point.
+#### It is a fun project made for timepass and ***learn***.
 
 ---
 
@@ -31,7 +30,7 @@ It solves zero real-world problems. It does exactly what it says. That's the poi
 
 [![Download APK](https://img.shields.io/badge/Download%20APK-Latest%20Release-ef4444?style=for-the-badge&logo=android)](https://github.com/RajnishKMehta/Scream2Wish/releases/latest)
 
-Install on any Android device (sideloading required — enable "Install from unknown sources" in settings).
+Install on any Android device (sideloading required enable "Install from unknown sources" in settings).
 
 ---
 
@@ -41,12 +40,12 @@ Install on any Android device (sideloading required — enable "Install from unk
 The app opens with an animated permission screen asking for microphone access (to detect your screams) and vibration (to annoy you while you're idle). You cannot proceed without granting both. The back button is "defective."
 
 ### Step 2 — Fake Login
-A suspiciously serious login screen asks for your **real name** and a **password**. The name is used throughout the experience. The password has a specific validation rule — figure it out yourself. Enter it wrong enough times and a video overlay starts playing in the background to make you regret your life choices. A sound effect also plays. You have been warned.
+A suspiciously serious login screen asks for your **real name** and a **password**. The name is used throughout the experience. The password has a specific validation rule figure it out yourself. Enter it wrong enough times and a video overlay starts playing in the background to make you regret your life choices. A sound effect also plays. You have been warned.
 
 ### Step 3 — The Lamp
 A countdown from 5. Then the main event.
 
-A genie lamp sits in the center of the screen. A vertical amplitude meter in the top right corner reflects your scream in real time. **The louder you scream, the faster the lamp breaks.** Stop screaming for even a second and the lamp fully resets to normal. The phone vibrates at you constantly while you're silent — encouragement.
+A genie lamp sits in the center of the screen. A vertical amplitude meter in the top right corner reflects your scream in real time. **The louder you scream, the faster the lamp breaks.** Stop screaming for even a second and the lamp fully resets to normal. The phone vibrates at you constantly while you're silent encouragement.
 
 - **25% progress** — the lamp starts cracking. The genie speaks to you via text-to-speech.
 - **55% progress** — the lamp is half destroyed.
@@ -54,15 +53,15 @@ A genie lamp sits in the center of the screen. A vertical amplitude meter in the
 
 | Value | Character | Probability |
 |-------|-----------|-------------|
-| `0` | 😈 Red Mermaid (yes, from a genie lamp) | 30% |
-| `1` | 🧞 Genie | 35% |
-| `2` | 🧜 Blue Mermaid (also from a genie lamp) | 35% |
+| `0` | <img align="left" src="assets/images/in/red_mermaid.png" alt="Red Mermaid" height="48" width="auto" /> Red Mermaid (yes, from a genie lamp) | 30% |
+| `1` | <img align="left" src="assets/images/in/ginie.png" alt="Genie" height="48" width="auto" /> Genie | 35% |
+| `2` | <img align="left" src="assets/images/in/blue_mermaid.png" alt="Blue Mermaid" height="48" width="auto" /> Blue Mermaid (also from a genie lamp) | 35% |
 
 ### Step 4 — Make Your Wish
 The character that emerged from the lamp greets you via text-to-speech and asks you to type your wish. Then it asks you to leave a note for the world. Both steps have a skip option, but after all that screaming, why would you?
 
 ### Step 5 — The End
-Your wish and note are queued to be sent silently in the background to the [Scream2Wish-wishes](https://github.com/RajnishKMehta/Scream2Wish-wishes) repository. Meanwhile, you receive a random stranger's note in return — their name, their message, the timestamp of when they screamed. Below that, your own note is shown back to you. You can share your wish.
+Your wish and note are queued to be sent silently in the background to the [Scream2Wish-wishes](https://github.com/RajnishKMehta/Scream2Wish-wishes) repository. Meanwhile, you receive a random stranger's note in return their name, their message, the timestamp of when they screamed. Below that, your own note is shown back to you. You can share your wish.
 
 That's it. There is no restart button. The app is done with you.
 
@@ -120,7 +119,7 @@ That's it. There is no restart button. The app is done with you.
 
 ### Why a Cloudflare Worker in the middle?
 
-You cannot safely embed a GitHub token inside a mobile APK — it would be publicly extractable. The Cloudflare Worker holds the GitHub token securely as an environment secret. The app only needs a rotating API key to talk to the Worker, which is far easier to rotate without a new app release.
+You cannot safely embed a GitHub token inside a mobile APK it would be publicly extractable. The Cloudflare Worker holds the GitHub token securely as an environment secret. The app only needs a rotating API key to talk to the Worker, which is far easier to rotate without a new app release.
 
 ---
 
@@ -151,17 +150,18 @@ You cannot safely embed a GitHub token inside a mobile APK — it would be publi
 
 ## Local Storage Reference
 
-| Key | Value | Description |
-|-----|-------|-------------|
-| `name` | string | User's name from login |
-| `ginie` | `"0"` / `"1"` / `"2"` | Which character came out of the lamp |
-| `mywish` | string | The wish the user typed |
-| `mynote` | string | The user's personal note |
-| `iscompleted` | `"0"` / `"1"` | Whether the user finished the wish flow |
-| `issent` | `"0"` / `"1"` | Whether the wish was successfully sent |
-| `rnote` | string | A random stranger's note |
-| `rnotefrom` | string | That stranger's name |
-| `rnoteat` | string | Unix timestamp (ms) of when they screamed |
+| Key | Type | Value | Description |
+|-----|------|-------|-------------|
+| `name` | `string` | any | User's real name from login |
+| `ginie` | `number` | `0` / `1` / `2` | Which character emerged from the lamp (0 = Red Mermaid, 1 = Genie, 2 = Blue Mermaid) |
+| `isginiereleased` | `boolean` | `true` / `false` | Whether the lamp was fully broken. Gates re-entry into main/index screens. |
+| `mywish` | `string` | any | The wish the user typed |
+| `mynote` | `string` | any | The user's personal note (required, not optional) |
+| `iscompleted` | `boolean` | `true` / `false` | Whether the user completed the wish + note flow |
+| `issent` | `boolean` | `true` / `false` | Whether the wish was successfully sent to the server |
+| `rnote` | `string` | any | A random stranger's note fetched from the wishes repo |
+| `rnotefrom` | `string` | any | The name of who wrote that note |
+| `rnoteat` | `string` | unix ms as string | When that stranger screamed (displayed as human-readable local time) |
 
 ---
 
@@ -183,7 +183,7 @@ pnpm install
 # EXPO_PUBLIC_WISH_WORKER_API=your_api_key_here
 
 # Start Expo dev server
-npx expo start
+pnpm dlx expo start
 ```
 
 To build a standalone APK:
@@ -207,7 +207,7 @@ The Cloudflare Worker lives in `action-trigger-worker/`. It requires two environ
 ```bash
 cd action-trigger-worker
 pnpm install
-npx wrangler deploy
+pnpm dlx wrangler deploy
 ```
 
 ---
@@ -216,7 +216,7 @@ npx wrangler deploy
 
 | Repo | Description |
 |------|-------------|
-| [Scream2Wish](https://github.com/RajnishKMehta/Scream2Wish) | This repo — app + worker |
+| [Scream2Wish](https://github.com/RajnishKMehta/Scream2Wish) | This repo: app + worker |
 | [Scream2Wish-wishes](https://github.com/RajnishKMehta/Scream2Wish-wishes) | Public JSON store of all submitted wishes |
 
 ---
@@ -233,7 +233,7 @@ It is overengineered on purpose. It is useless on purpose. And it absolutely wor
 
 ## License
 
-[MIT](./LICENSE) — free to use, fork, or scream at.
+[MIT](./LICENSE) - free to use, fork, or scream at.
 
 ---
 

@@ -23,13 +23,12 @@ interface Props {
 
 const MAX_CHARS = 200;
 
-const WISH_PROMPT = 'Tell me your wish...';
-const NOTE_PROMPT = 'Leave a note for the world.';
-
 export function WishInputComponent({ characterSource, onDone }: Props) {
   const [step, setStep] = useState<Step>('wish');
   const [wishText, setWishText] = useState('');
   const [noteText, setNoteText] = useState('');
+  const [showWishError, setShowWishError] = useState(false);
+  const [showNoteError, setShowNoteError] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
   useEffect(() => {
@@ -42,32 +41,39 @@ export function WishInputComponent({ characterSource, onDone }: Props) {
   useEffect(() => {
     if (step === 'note') {
       setTimeout(() => {
-        speak("Great. Now leave a note — something the universe should remember.");
+        speak(
+          "Great. Now leave a note — a message the universe will remember. This will be shared with random people around the world.",
+        );
         inputRef.current?.focus();
       }, 300);
     }
   }, [step]);
 
   function handleWishContinue() {
-    const trimmed = wishText.trim();
-    if (!trimmed) return;
-    Storage.set('mywish', trimmed);
+    if (!wishText.trim()) {
+      setShowWishError(true);
+      return;
+    }
+    Storage.set('mywish', wishText.trim());
     stopSpeech();
     Keyboard.dismiss();
     setStep('note');
   }
 
   function handleNoteContinue() {
-    const trimmed = noteText.trim();
-    Storage.set('mynote', trimmed);
-    Storage.set('iscompleted', '1');
+    if (!noteText.trim()) {
+      setShowNoteError(true);
+      return;
+    }
+    Storage.set('mynote', noteText.trim());
+    Storage.set('iscompleted', true);
     stopSpeech();
     Keyboard.dismiss();
     onDone();
   }
 
   function handleSkip() {
-    Storage.set('iscompleted', '0');
+    Storage.set('iscompleted', false);
     stopSpeech();
     Keyboard.dismiss();
     onDone();
@@ -75,10 +81,18 @@ export function WishInputComponent({ characterSource, onDone }: Props) {
 
   const isWishStep = step === 'wish';
   const currentText = isWishStep ? wishText : noteText;
-  const setCurrentText = isWishStep ? setWishText : setNoteText;
-  const canContinue = isWishStep
-    ? wishText.trim().length > 0
-    : true;
+  const showError = isWishStep ? showWishError : showNoteError;
+
+  function handleTextChange(t: string) {
+    const sliced = t.slice(0, MAX_CHARS);
+    if (isWishStep) {
+      setWishText(sliced);
+      if (showWishError && sliced.trim()) setShowWishError(false);
+    } else {
+      setNoteText(sliced);
+      if (showNoteError && sliced.trim()) setShowNoteError(false);
+    }
+  }
 
   return (
     <KeyboardAvoidingView
@@ -93,22 +107,27 @@ export function WishInputComponent({ characterSource, onDone }: Props) {
         />
 
         <Text style={EndStyles.wishPrompt}>
-          {isWishStep ? WISH_PROMPT : NOTE_PROMPT}
+          {isWishStep ? 'What is your wish?' : 'Leave a note for the world.'}
         </Text>
 
         <Text style={EndStyles.wishSubPrompt}>
           {isWishStep
-            ? 'Type your deepest wish. The universe is listening.'
-            : 'Optional — a message to leave behind for the world.'}
+            ? 'Your wish will be published publicly and shared on the Scream2Wish board for everyone to see.'
+            : 'A random stranger will receive this note. Make it count.'}
         </Text>
 
-        <View style={EndStyles.wishInputWrap}>
+        <View
+          style={[
+            EndStyles.wishInputWrap,
+            showError && EndStyles.wishInputWrapError,
+          ]}
+        >
           <TextInput
             ref={inputRef}
             style={EndStyles.wishInput}
             value={currentText}
-            onChangeText={(t) => setCurrentText(t.slice(0, MAX_CHARS))}
-            placeholder={isWishStep ? 'I wish for...' : 'Write a note...'}
+            onChangeText={handleTextChange}
+            placeholder={isWishStep ? 'I wish for...' : 'Write something real...'}
             placeholderTextColor="#4b5563"
             multiline
             returnKeyType="done"
@@ -116,17 +135,19 @@ export function WishInputComponent({ characterSource, onDone }: Props) {
           />
         </View>
 
+        {showError && (
+          <Text style={EndStyles.wishErrorText}>
+            {isWishStep ? 'Your wish cannot be empty.' : 'Please write a note.'}
+          </Text>
+        )}
+
         <Text style={EndStyles.wishCharCount}>
           {currentText.length} / {MAX_CHARS}
         </Text>
 
         <TouchableOpacity
-          style={[
-            EndStyles.wishBtnPrimary,
-            !canContinue && { opacity: 0.5 },
-          ]}
+          style={EndStyles.wishBtnPrimary}
           onPress={isWishStep ? handleWishContinue : handleNoteContinue}
-          disabled={!canContinue}
           activeOpacity={0.8}
         >
           <Text style={EndStyles.wishBtnPrimaryText}>
@@ -139,7 +160,7 @@ export function WishInputComponent({ characterSource, onDone }: Props) {
           onPress={handleSkip}
           activeOpacity={0.7}
         >
-          <Text style={EndStyles.wishBtnSkipText}>Skip</Text>
+          <Text style={EndStyles.wishBtnSkipText}>Skip everything</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

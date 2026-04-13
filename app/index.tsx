@@ -70,6 +70,12 @@ export default function PermissionGate() {
     await new Promise((r) => setTimeout(r, 300));
 
     if (areRequiredPermissionsGranted(requiredStatuses)) {
+      const alreadyReleased = Storage.getBoolean('isginiereleased');
+      if (alreadyReleased === true) {
+        router.replace('/end');
+        return;
+      }
+
       const savedName = Storage.getString('name');
       if (savedName && savedName.trim().length > 5) {
         router.replace('/main');

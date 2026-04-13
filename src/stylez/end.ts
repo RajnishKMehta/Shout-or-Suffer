@@ -140,8 +140,21 @@ export const EndStyles = StyleSheet.create({
     borderColor: Colors.border.neutral,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.lg,
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.sm,
     minHeight: 90,
+  },
+
+  wishInputWrapError: {
+    borderColor: Colors.border.redStrong,
+    backgroundColor: Colors.bg.errorInput,
+  },
+
+  wishErrorText: {
+    fontSize: FontSize.xs,
+    color: Colors.red.primary,
+    fontWeight: FontWeight.semibold,
+    alignSelf: 'flex-start',
+    marginBottom: Spacing.sm,
   },
 
   wishInput: {

@@ -22,9 +22,9 @@ const IMG_GINIE        = require('@img/in/ginie.png');
 const IMG_BLUE_MERMAID = require('@img/in/blue_mermaid.png');
 const IMG_RED_MERMAID  = require('@img/in/red_mermaid.png');
 
-function getCharacterSource(ginie: string): ImageSourcePropType {
-  if (ginie === '1') return IMG_GINIE;
-  if (ginie === '2') return IMG_BLUE_MERMAID;
+function getCharacterSource(ginie: number): ImageSourcePropType {
+  if (ginie === 1) return IMG_GINIE;
+  if (ginie === 2) return IMG_BLUE_MERMAID;
   return IMG_RED_MERMAID;
 }
 
@@ -44,13 +44,13 @@ function formatTimestamp(ms: number): string {
 }
 
 export default function EndScreen() {
-  const [ginie, setGinie]               = useState<string | null>(null);
-  const [showInput, setShowInput]       = useState(false);
-  const [notesReady, setNotesReady]     = useState(false);
-  const [rnote, setRnote]               = useState('');
-  const [rnotefrom, setRnotefrom]       = useState('');
-  const [rnoteat, setRnoteat]           = useState('');
-  const [mynote, setMynote]             = useState('');
+  const [ginie, setGinie]           = useState<number | null>(null);
+  const [showInput, setShowInput]   = useState(false);
+  const [notesReady, setNotesReady] = useState(false);
+  const [rnote, setRnote]           = useState('');
+  const [rnotefrom, setRnotefrom]   = useState('');
+  const [rnoteat, setRnoteat]       = useState('');
+  const [mynote, setMynote]         = useState('');
 
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -63,19 +63,23 @@ export default function EndScreen() {
   }, []);
 
   useEffect(() => {
-    const storedGinie = Storage.getString('ginie');
-    if (storedGinie === undefined || storedGinie === null) {
+    const released = Storage.getBoolean('isginiereleased');
+    if (released !== true) {
+      router.replace('/main');
+      return;
+    }
+
+    const storedGinie = Storage.getNumber('ginie');
+    if (storedGinie === undefined) {
       router.replace('/main');
       return;
     }
 
     setGinie(storedGinie);
-
-    // start background fetch immediately
     fetchAndStoreRandomWish();
 
-    const completed = Storage.getString('iscompleted');
-    if (!completed || completed === '0') {
+    const completed = Storage.getBoolean('iscompleted');
+    if (completed !== true) {
       setShowInput(true);
     } else {
       loadNotesAndShow();
@@ -98,14 +102,13 @@ export default function EndScreen() {
   async function handleShare() {
     try {
       const wish = Storage.getString('mywish') ?? '';
-      const note = mynote;
       const parts: string[] = [];
       if (wish) parts.push(`My wish: "${wish}"`);
-      if (note) parts.push(`My note: "${note}"`);
-      parts.push('Released with Scream2Wish');
+      if (mynote) parts.push(`My note: "${mynote}"`);
+      parts.push('Released with Scream2Wish — https://rajnishkmehta.github.io/Scream2Wish');
       await Share.share({ message: parts.join('\n\n') });
     } catch {
-      // user cancelled or share not available
+      // user cancelled or share unavailable
     }
   }
 
@@ -136,8 +139,8 @@ export default function EndScreen() {
 
   const rnoteatMs = Number(rnoteat);
   const rnoteatFormatted = formatTimestamp(rnoteatMs);
-  const iscompleted = Storage.getString('iscompleted');
-  const userParticipated = iscompleted === '1';
+  const completed = Storage.getBoolean('iscompleted');
+  const userParticipated = completed === true;
 
   return (
     <ScrollView

@@ -83,8 +83,14 @@ export default function MainScreen() {
     });
     return () => sub.remove();
   }, []);
-  
+
   useEffect(() => {
+    const alreadyReleased = Storage.getBoolean('isginiereleased');
+    if (alreadyReleased === true) {
+      router.replace('/end');
+      return;
+    }
+
     const name = Storage.getString('name');
     if (!name) {
       router.replace('/login');
@@ -99,7 +105,7 @@ export default function MainScreen() {
     const t = setTimeout(() => setPhase('countdown'), 600);
     return () => clearTimeout(t);
   }, []);
-  
+
   useEffect(() => {
     if (phase !== 'countdown') return;
     setCountdown(5);
@@ -115,13 +121,13 @@ export default function MainScreen() {
     }, 1000);
     return () => clearInterval(iv);
   }, [phase]);
-  
+
   const scheduleIdleReminder = useCallback(() => {
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     idleTimerRef.current = setTimeout(() => {
       if (!hasScreamedRef.current) {
         speak(randomFrom(IDLE_PHRASES));
-        
+
         idleTimerRef.current = setTimeout(() => {
           if (!hasScreamedRef.current) {
             speak(randomFrom(IDLE_PHRASES));
@@ -131,13 +137,13 @@ export default function MainScreen() {
     }, 5000);
   }, []);
 
-  
   const handleComplete = useCallback(() => {
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     stopScreamDetection();
     stopVibration();
     setLampStage('broken100');
     setPhase('complete');
+    Storage.set('isginiereleased', true);
 
     setTimeout(() => {
       setShowCharacter(true);
@@ -157,14 +163,13 @@ export default function MainScreen() {
 
       setTimeout(() => {
         speak(
-          'Congratulations, you\'ve released someone. Now make your wish.',
+          `Congratulations ${userNameRef.current}! You've broken the genie's lamp, and someone has come out. Now, make your wish.`,
           { onDone: () => router.replace('/end') }
         );
       }, 1500);
     }, 600);
   }, [lampOffsetAnim, characterAnim]);
 
-  
   const handleProgressChange = useCallback((progress: number) => {
     if (progress > 0) hadProgressRef.current = true;
 
@@ -187,7 +192,6 @@ export default function MainScreen() {
     }
   }, []);
 
-  
   const handleReset = useCallback(() => {
     if (hadProgressRef.current && milestone55Ref.current) {
       speak(randomFrom(RESET_PHRASES));
@@ -199,7 +203,6 @@ export default function MainScreen() {
     scheduleIdleReminder();
   }, [scheduleIdleReminder]);
 
-  
   useEffect(() => {
     if (phase !== 'active') return;
 
@@ -228,7 +231,6 @@ export default function MainScreen() {
     };
   }, [phase, handleProgressChange, handleComplete, handleReset, scheduleIdleReminder]);
 
-  
   useEffect(() => {
     return () => {
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
@@ -243,7 +245,6 @@ export default function MainScreen() {
     outputRange: [0, 90],
   });
 
-  
   if (phase === 'init') {
     return <View style={MainStyles.screen} />;
   }
@@ -256,8 +257,6 @@ export default function MainScreen() {
     );
   }
 
-
-  
   return (
     <View style={MainStyles.screen}>
 
