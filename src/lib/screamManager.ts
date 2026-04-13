@@ -13,7 +13,7 @@ export type ScreamCallbacks = {
 const MIN_COMPLETION_SECS = 20; // loudest scream finishes in this many seconds
 const MAX_COMPLETION_SECS = 35; // quietest qualifying scream finishes in this many seconds
 
-const DB_SILENCE = -40;
+const DB_SILENCE = -35;
 const DB_MAX = -3;
 
 // 0.5 ≈ -25 dBFS

@@ -5,3 +5,4 @@ export { Layout } from './layout';
 export { Components } from './components';
 export { MemeLoadingStyles } from './memeLoading';
 export { MainStyles } from './main';
+export { EndStyles } from './end';
