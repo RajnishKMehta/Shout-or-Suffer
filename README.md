@@ -15,6 +15,10 @@
 
 </div>
 
+# ⚠️warning
+> v1.0.0 is not working properly
+> update coming under 2 hours
+
 ---
 
 ## What Is This?
