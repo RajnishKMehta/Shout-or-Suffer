@@ -171,18 +171,18 @@ It’s not perfect security, but **it’s a practical way to reduce spam and kee
 
 ## Local Storage Reference
 
-| Key | Type | Value | Description |
-|-----|------|-------|-------------|
-| `name` | `string` | any | User's real name from login |
-| `ginie` | `number` | `0` / `1` / `2` | Which character emerged from the lamp (0 = Red Mermaid, 1 = Genie, 2 = Blue Mermaid) |
-| `isginiereleased` | `boolean` | `true` / `false` | Whether the lamp was fully broken. Gates re-entry into main/index screens. |
-| `mywish` | `string` | any | The wish the user typed |
-| `mynote` | `string` | any | The user's personal note (required, not optional) |
-| `iscompleted` | `boolean` | `true` / `false` | Whether the user completed the wish + note flow |
-| `issent` | `boolean` | `true` / `false` | Whether the wish was successfully sent to the server |
-| `rnote` | `string` | any | A random stranger's note fetched from the wishes repo |
-| `rnotefrom` | `string` | any | The name of who wrote that note |
-| `rnoteat` | `string` | unix ms as string | When that stranger screamed (displayed as human-readable local time) |
+| Key | Type | Description |
+| :--- | :--- | :--- |
+| `name` | `string` | User's real name from login. |
+| `ginie` | `number` | Character ID: `0` (Red Mermaid), `1` (Genie), `2` (Blue Mermaid). |
+| `isginiereleased` | `boolean` | `true` if lamp was fully broken; gates re-entry logic. |
+| `mywish` | `string` | The wish text typed by the user. |
+| `mynote` | `string` | The user's personal note (required). |
+| `iscompleted` | `boolean` | `true` if the wish + note flow is finished. |
+| `issent` | `boolean` | `true` if successfully sent to the server. |
+| `rnote` | `string` | Random stranger's note fetched from repo. |
+| `rnotefrom` | `string` | Name of the stranger who wrote the random note. |
+| `rnoteat` | `string` | Unix timestamp (ms) of the stranger's scream. |
 
 ---
 
