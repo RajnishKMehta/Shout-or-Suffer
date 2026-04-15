@@ -12,8 +12,6 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import {
-  Eye,
-  EyeOff,
   LogIn,
   User,
   Lock,
@@ -24,15 +22,33 @@ import { validatePassword } from '@lib/passValidator';
 import { Storage } from '@lib/storage';
 import { playChiSasur, stopPlaying } from '@lib/audioManager';
 import { speak } from '@lib/speechManager';
-import { Colors, Layout, Components, Typography } from '@stylez';
+import { Colors, Spacing, Layout, Components, Typography } from '@stylez';
 import { VideoOverlay } from '@cmp/VideoOverlay';
 import { LoadingScreen } from '@cmp/LoginLoading';
 import { RoastOverlay } from '@cmp/RoastOverlay';
 
+const showPassToggleStyle = {
+  fontSize: 13,
+  color: Colors.text.subtle,
+  letterSpacing: 0.2,
+} as const;
+
 const NAME_MAX = 30;
 
-const ROAST_TTS =
-  "I've seen a lot of chutiyas in my life but like you, neverrr!";
+const ROAST_POOL = [
+  "Congratulations. The placeholder text was the password, and you still managed to fail. Truly a masterclass in helplessness.",
+  "I've seen more intelligence from a frozen loading screen. At least it eventually does something.",
+  "You had one job. One. The field literally says PassW0RD. Where exactly did your brain go?",
+  "Somewhere in the world right now, a smart toaster is feeling very smug about you.",
+  "Typing that slowly and still getting it wrong deserves some sort of award. Wrong award, but an award.",
+  "Scientists are baffled. The password has not moved. Your fingers have. And yet, here we are.",
+  "Achievement unlocked: wrong four times in a row on a screen that tells you the answer.",
+  "I'm not saying you're the least observant person alive, but the evidence is really not in your favour.",
+];
+
+function randomRoast(): string {
+  return ROAST_POOL[Math.floor(Math.random() * ROAST_POOL.length)];
+}
 
 function isValidName(name: string): boolean {
   const trimmed = name.trim();
@@ -112,10 +128,10 @@ export default function LoginScreen() {
       setPassErrorVisible(true);
       shakeError();
 
-      if (newAttempts >= 3) {
+      if (newAttempts >= 4) {
         setRoastVisible(true);
         stopPlaying();
-        speak(ROAST_TTS, { rate: 0.9 });
+        speak(randomRoast(), { rate: 0.9 });
       } else {
         await playChiSasur();
       }
@@ -246,17 +262,6 @@ export default function LoginScreen() {
                     returnKeyType="done"
                     onSubmitEditing={handleLogin}
                   />
-                  <TouchableOpacity
-                    onPress={() => setShowPass((p) => !p)}
-                    activeOpacity={0.7}
-                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  >
-                    {showPass ? (
-                      <EyeOff size={18} color={Colors.text.subtle} strokeWidth={2} />
-                    ) : (
-                      <Eye size={18} color={Colors.text.subtle} strokeWidth={2} />
-                    )}
-                  </TouchableOpacity>
                 </View>
                 {showPassError && (
                   <View style={Components.errorRow}>
@@ -280,6 +285,17 @@ export default function LoginScreen() {
               >
                 <LogIn size={18} color={Colors.text.white} strokeWidth={2.5} />
                 <Text style={Typography.btnHeroText}>Login</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => setShowPass((p) => !p)}
+                activeOpacity={0.6}
+                hitSlop={{ top: 8, bottom: 8, left: 20, right: 20 }}
+                style={{ marginTop: Spacing.md, alignSelf: 'center' }}
+              >
+                <Text style={showPassToggleStyle}>
+                  {showPass ? 'Hide password' : 'Show password'}
+                </Text>
               </TouchableOpacity>
             </Animated.View>
 

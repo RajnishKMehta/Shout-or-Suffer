@@ -18,6 +18,8 @@ const GITHUB_URL    = 'https://github.com/RajnishKMehta';
 const LINKEDIN_URL  = 'https://linkedin.com/in/RajnishKMehta';
 const DEVTO_URL     = 'https://dev.to/RajnishKMehta';
 
+const AVATAR_SIZE = 100;
+
 interface Props {
   rnoteLoaded: boolean;
 }
@@ -73,22 +75,7 @@ export function CreatorCard({ rnoteLoaded }: Props) {
     <View style={styles.wrap}>
       <View style={styles.divider} />
 
-      <TouchableOpacity
-        style={styles.websiteBtn}
-        onPress={() => openLink(APP_URL)}
-        activeOpacity={0.8}
-      >
-        <Globe size={18} color={Colors.red.primary} strokeWidth={2} />
-        <View style={styles.websiteBtnText}>
-          <Text style={styles.websiteBtnTitle}>See all wishes on the web</Text>
-          <Text style={styles.websiteBtnSub}>
-            Visit Scream2Wish to read wishes &amp; notes from everyone
-          </Text>
-        </View>
-        <Text style={styles.websiteArrow}>›</Text>
-      </TouchableOpacity>
-
-      <View style={styles.creatorRow}>
+      <View style={styles.card}>
         <View style={styles.avatarWrap}>
           <Animated.Image
             source={LOCAL_AVATAR}
@@ -102,34 +89,43 @@ export function CreatorCard({ rnoteLoaded }: Props) {
           )}
         </View>
 
-        <View style={styles.creatorInfo}>
-          <Text style={styles.creatorLabel}>Made by</Text>
-          <Text style={styles.creatorName}>Rajnish K. Mehta</Text>
+        <Text style={styles.madeBy}>Made by</Text>
+        <Text style={styles.creatorName}>Rajnish Mehta</Text>
+        <Text style={styles.username}>@RajnishKMehta</Text>
 
-          <View style={styles.socialRow}>
-            <TouchableOpacity
-              style={styles.socialChip}
-              onPress={() => openLink(GITHUB_URL)}
-              activeOpacity={0.75}
-            >
-              <Text style={styles.socialChipText}>GitHub</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.socialChip}
-              onPress={() => openLink(LINKEDIN_URL)}
-              activeOpacity={0.75}
-            >
-              <Text style={styles.socialChipText}>LinkedIn</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.socialChip}
-              onPress={() => openLink(DEVTO_URL)}
-              activeOpacity={0.75}
-            >
-              <Text style={styles.socialChipText}>Dev.to</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={styles.socialRow}>
+          <TouchableOpacity
+            style={styles.socialChip}
+            onPress={() => openLink(GITHUB_URL)}
+            activeOpacity={0.75}
+          >
+            <Text style={styles.socialChipText}>GitHub</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.socialChip}
+            onPress={() => openLink(LINKEDIN_URL)}
+            activeOpacity={0.75}
+          >
+            <Text style={styles.socialChipText}>LinkedIn</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.socialChip}
+            onPress={() => openLink(DEVTO_URL)}
+            activeOpacity={0.75}
+          >
+            <Text style={styles.socialChipText}>Dev.to</Text>
+          </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+          style={styles.websiteBtn}
+          onPress={() => openLink(APP_URL)}
+          activeOpacity={0.8}
+        >
+          <Globe size={16} color={Colors.red.primary} strokeWidth={2} />
+          <Text style={styles.websiteBtnText}>See all wishes on the web</Text>
+          <Text style={styles.websiteArrow}>›</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -139,6 +135,7 @@ const styles = StyleSheet.create({
   wrap: {
     width: '100%',
     marginTop: Spacing.xl,
+    paddingBottom: Spacing.xxxl,
   },
 
   divider: {
@@ -147,68 +144,33 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
 
-  websiteBtn: {
-    flexDirection: 'row',
+  card: {
     alignItems: 'center',
-    gap: Spacing.md,
-    backgroundColor: Colors.bg.card,
-    borderRadius: Radius.xxl,
-    borderWidth: 1,
-    borderColor: Colors.border.redFaint,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.lg,
-    marginBottom: Spacing.xl,
-  },
-
-  websiteBtnText: {
-    flex: 1,
-  },
-
-  websiteBtnTitle: {
-    fontSize: FontSize.body,
-    fontWeight: FontWeight.semibold,
-    color: Colors.text.white,
-    marginBottom: 2,
-  },
-
-  websiteBtnSub: {
-    fontSize: FontSize.xs,
-    color: Colors.text.subtle,
-    lineHeight: 16,
-  },
-
-  websiteArrow: {
-    fontSize: 22,
-    color: Colors.text.dimmer,
-    lineHeight: 24,
-  },
-
-  creatorRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xl,
     backgroundColor: Colors.bg.card,
     borderRadius: Radius.xxl,
     borderWidth: 1,
     borderColor: Colors.border.neutral,
-    padding: Spacing.xl,
+    paddingTop: Spacing.xxxl,
+    paddingBottom: Spacing.xl,
+    paddingHorizontal: Spacing.xl,
+    gap: 0,
   },
 
   avatarWrap: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    borderRadius: AVATAR_SIZE / 2,
     overflow: 'hidden',
     backgroundColor: Colors.bg.elevated,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: Colors.border.redLight,
-    flexShrink: 0,
+    marginBottom: Spacing.lg,
   },
 
   avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    borderRadius: AVATAR_SIZE / 2,
   },
 
   avatarAbsolute: {
@@ -217,30 +179,34 @@ const styles = StyleSheet.create({
     left: 0,
   },
 
-  creatorInfo: {
-    flex: 1,
-  },
-
-  creatorLabel: {
+  madeBy: {
     fontSize: FontSize.xs,
     fontWeight: FontWeight.bold,
     color: Colors.text.dimmer,
-    letterSpacing: 1.1,
+    letterSpacing: 1.2,
     textTransform: 'uppercase',
-    marginBottom: 4,
+    marginBottom: 6,
   },
 
   creatorName: {
-    fontSize: FontSize.btn,
+    fontSize: 22,
     fontWeight: FontWeight.bold,
     color: Colors.text.white,
-    marginBottom: Spacing.md,
+    marginBottom: 4,
+    letterSpacing: 0.2,
+  },
+
+  username: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.medium,
+    color: Colors.text.subtle,
+    marginBottom: Spacing.xl,
   },
 
   socialRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
+    gap: Spacing.sm,
+    marginBottom: Spacing.xl,
   },
 
   socialChip: {
@@ -248,13 +214,41 @@ const styles = StyleSheet.create({
     borderRadius: Radius.full,
     borderWidth: 1,
     borderColor: Colors.border.neutral,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 4,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 6,
   },
 
   socialChipText: {
     fontSize: FontSize.xs,
     fontWeight: FontWeight.semibold,
     color: Colors.text.muted,
+    letterSpacing: 0.3,
+  },
+
+  websiteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    backgroundColor: Colors.bg.elevated,
+    borderRadius: Radius.xl,
+    borderWidth: 1,
+    borderColor: Colors.border.redFaint,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    alignSelf: 'stretch',
+    marginTop: 4,
+  },
+
+  websiteBtnText: {
+    flex: 1,
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: Colors.text.white,
+  },
+
+  websiteArrow: {
+    fontSize: 20,
+    color: Colors.text.dimmer,
+    lineHeight: 22,
   },
 });

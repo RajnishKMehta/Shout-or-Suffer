@@ -16,33 +16,43 @@ const PASSWORD = 'PassW0RD';
 const ROASTS = [
   {
     emoji: '🫠',
-    title: 'Three strikes.',
-    body: "The password was the placeholder text. In the input box. The grey text that appeared before you started typing. You've been looking at it this entire time.",
+    title: 'Four strikes.',
+    body: "The password was the placeholder text. The grey text inside the input box. Visible on all four attempts. You've been looking at it the entire time.",
   },
   {
     emoji: '😐',
     title: "We need to talk.",
-    body: 'The hint was the answer. The placeholder in the password field literally said "PassW0RD". We put it there for you. Three tries later, here we are.',
+    body: 'The hint was the answer. The placeholder in the password field literally said "PassW0RD". We put it there for you. Four tries later, here we are.',
   },
   {
     emoji: '💀',
     title: "Achievement unlocked.",
-    body: '"Can\'t Read Input Fields" — the password was printed right inside the box you were typing in. Congratulations on this milestone.',
+    body: '"Can\'t Read Input Fields" — the password was printed right inside the box you were typing in. Four consecutive attempts. Congratulations on this milestone.',
   },
   {
     emoji: '🪨',
     title: "Rocks solve this faster.",
-    body: "We've seen inanimate objects figure this out. The password was the placeholder. Grey text. Inside the field. We built this screen specifically for you.",
+    body: "We've seen inanimate objects figure this out. The password was the placeholder. Grey text. Inside the field. You had four chances. We built this screen specifically for you.",
   },
   {
     emoji: '🤦',
-    title: "We're doing this for you.",
-    body: "Our engineers are genuinely emotional right now. Three attempts. The answer was displayed inside the input on every single one of them. Here it is again.",
+    title: "I'm doing this for you.",
+    body: "I'm genuinely emotional right now. Four attempts. The answer was displayed inside the input on every single one of them. Here it is again.",
   },
   {
     emoji: '🫡',
     title: "No judgment. Some judgment.",
-    body: 'A placeholder is a hint. In this case, it was also the exact correct answer. We applaud your persistence. We do not applaud your observation skills.',
+    body: 'A placeholder is a hint. In this case, it was also the exact correct answer. We applaud your persistence across four attempts. We do not applaud your observation skills.',
+  },
+  {
+    emoji: '🧠',
+    title: "A study in patience.",
+    body: "You tried four times. Each time the answer sat inside the field, unhidden, unencrypted, plain text, completely visible. Science has no explanation for what happened here.",
+  },
+  {
+    emoji: '🔍',
+    title: "The clue was the answer.",
+    body: "Detectives spend careers learning to see what's in front of them. In four attempts, you developed the opposite skill. The password was the placeholder. It still is.",
   },
 ];
 
@@ -51,11 +61,11 @@ type Props = {
 };
 
 export function RoastOverlay({ visible }: Props) {
-  const slideAnim   = useRef(new Animated.Value(500)).current;
+  const slideAnim    = useRef(new Animated.Value(500)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
-  const [copied, setCopied]   = useState(false);
-  const [roast]               = useState(() => ROASTS[Math.floor(Math.random() * ROASTS.length)]);
-  const copyTimerRef          = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [roast]             = useState(() => ROASTS[Math.floor(Math.random() * ROASTS.length)]);
+  const copyTimerRef        = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (visible) {

@@ -42,7 +42,9 @@ The app opens with an animated permission screen asking for microphone access (t
 A suspiciously serious login screen asks for your **real name** and a **password**. The name is used throughout the experience. The password has a specific validation rule — figure it out yourself.
 
 - **1 wrong attempt** — a video overlay starts playing in the background.
-- **3 wrong attempts** — a roast panel slides up from the bottom. It picks one of several messages mocking your inability to read placeholder text, reveals the correct password with a copy button, and **does not go away**. After the roast panel appears, the background video and sound cut out entirely. Subsequent wrong attempts trigger text-to-speech instead.
+- **4 wrong attempts** — a roast panel slides up from the bottom. It picks one of eight messages mocking your inability to read placeholder text, reveals the correct password with a copy button, and **does not go away**. After the roast panel appears, the background video and sound cut out entirely. Subsequent wrong attempts trigger text-to-speech — a random insult from a pool of eight, delivered in English, no repeat guaranteed.
+
+The password field has no eye icon inside it. A plain text link below the Login button lets you toggle visibility.
 
 You have been warned.
 

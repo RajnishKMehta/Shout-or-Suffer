@@ -61,7 +61,7 @@ export default {
 					'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
 					'Accept': 'application/vnd.github.v3+json',
 					'Content-Type': 'application/json',
-					'User-Agent': 'action-trigger-worker',
+					'User-Agent': 'cfworker',
 				},
 				body: JSON.stringify({
 					event_type: payload.event_type,
