@@ -1,0 +1,98 @@
+name: Expo Doctor🩺
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: expo-doctor-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  expo-doctor:
+    name: Expo Doctor Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      # 1. Checkout
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6
+
+      # 2. Node 24
+      - name: ⬢ Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # 3. pnpm (reads "packageManager" field from package.json)
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        # If package.json has "packageManager": "pnpm@x.y.z", no extra
+        # config needed. Otherwise uncomment the line below and pin a version:
+        # with:
+        #   version: 9
+
+      # 4. Cache pnpm store
+      - name: 🗄️ Get pnpm store path
+        id: pnpm-store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - name: ♻️ Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-${{ runner.os }}-
+
+      # 5. Install deps
+      - name: 📂 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 6. Run expo-doctor and capture full output
+      - name: Run expo-doctor🩺
+        id: doctor
+        shell: bash
+        run: |
+          set +e   # don't exit immediately; we want to capture output first
+
+          RAW=$(pnpm dlx expo-doctor@latest 2>&1)
+          EXIT=$?
+
+          echo "$RAW"   # echo so it appears in the raw log
+
+          # ── store multi-line output for the next step ──
+          {
+            echo "raw<<EOF_DOCTOR"
+            echo "$RAW"
+            echo "EOF_DOCTOR"
+            echo "exit_code=$EXIT"
+          } >> "$GITHUB_OUTPUT"
+
+          exit $EXIT   # propagate the real exit code → step fails if non-zero
+
+      # 7. Annotate the PR with the failure reasons
+      - name: ❌ Report issues
+        if: failure() && steps.doctor.outputs.exit_code != '0'
+        shell: bash
+        run: |
+          RAW="${{ steps.doctor.outputs.raw }}"
+
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "  expo-doctor found the following issues"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          # Print every failing line as a GitHub error annotation
+          while IFS= read -r line; do
+            # expo-doctor marks issues with ✖, ✗, ✘, ×, [FAIL], ERROR, or Warning
+            if echo "$line" | grep -qiE '(✖|✗|✘|×|\[FAIL\]|error|warning|fix|issue|incompatible|mismatch|invalid|missing)'; then
+              echo "::error::$line"
+            fi
+          done <<< "$RAW"
+
+          # Also dump the full output so nothing is lost
+          echo ""
+          echo "── Full expo-doctor output ──"
+          echo "$RAW"
