@@ -2,7 +2,7 @@
 
 # <img align="right" src="assets/images/splash-light.png" alt="blue mermaid" height="64" width="auto" />Scream2Wish<img align="left" src="assets/images/splash-dark.png" alt="red mermaid" height="64" width="auto" />
 
-<img align="center" src="assets/images/logo16x9_2.png" alt="Scream2Wish" height="54" width="auto" />
+<img align="center" src="assets/images/logo16x9.png" alt="Scream2Wish" height="54" width="auto" />
 
 *A submission for the [DEV April Fools Challenge 2026](https://dev.to/challenges/aprilfools-2026)*
 
