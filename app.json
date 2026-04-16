@@ -2,7 +2,7 @@
   "expo": {
     "name": "Scream2Wish",
     "slug": "scream2wish",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": [
@@ -55,7 +55,8 @@
         {
           "android": {
             "minSdkVersion": 29,
-            "enableProguardInReleaseBuilds": true
+            "enableProguardInReleaseBuilds": true,
+            "enableMinifyInReleaseBuilds": true
           }
         }
       ]
@@ -67,7 +68,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "11d3fd05-ca9b-4d2f-9eba-ab5dbda49391"
+        "projectId": "38ccfdda-78a1-4306-9379-c0ff1cb6c275"
       }
     },
     "owner": "rajnishkmehta"

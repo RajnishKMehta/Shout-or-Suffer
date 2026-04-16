@@ -1,8 +1,8 @@
-<div align="center">
+<div id="top" align="center">
 
 # <img align="right" src="assets/images/splash-light.png" alt="blue mermaid" height="64" width="auto" />Scream2Wish<img align="left" src="assets/images/splash-dark.png" alt="red mermaid" height="64" width="auto" />
 
-<img align="center" src="assets/images/logo16x9.png" alt="Scream2Wish" height="54" width="auto" />
+<img align="center" src="assets/images/logo16x9_2.png" alt="Scream2Wish" height="54" width="auto" />
 
 *A submission for the [DEV April Fools Challenge 2026](https://dev.to/challenges/aprilfools-2026)*
 
@@ -42,11 +42,7 @@ The app opens with an animated permission screen asking for microphone access (t
 A suspiciously serious login screen asks for your **real name** and a **password**. The name is used throughout the experience. The password has a specific validation rule — figure it out yourself.
 
 - **1 wrong attempt** — a video overlay starts playing in the background.
-- **4 wrong attempts** — a roast panel slides up from the bottom. It picks one of eight messages mocking your inability to read placeholder text, reveals the correct password with a copy button, and **does not go away**. After the roast panel appears, the background video and sound cut out entirely. Subsequent wrong attempts trigger text-to-speech — a random insult from a pool of eight, delivered in English, no repeat guaranteed.
-
-The password field has no eye icon inside it. A plain text link below the Login button lets you toggle visibility.
-
-You have been warned.
+- **4 wrong attempts** — a roast panel slides up from the bottom. It picks & shows one messages mocking your inability to read placeholder/input box name text, reveals the correct password with a copy button, After the roast panel appears, the math effect overlay video and sound cut out entirely. Subsequent wrong attempts trigger text-to-speech - a random insult from a pool of eight, delivered in English, no repeat guaranteed.
 
 ### Step 3 — The Lamp
 A countdown from 5. Then the main event.
@@ -182,7 +178,7 @@ It’s not perfect security, but **it’s a practical way to reduce spam and kee
 | `issent` | `boolean` | `true` if successfully sent to the server. |
 | `rnote` | `string` | Random stranger's note fetched from repo. |
 | `rnotefrom` | `string` | Name of the stranger who wrote the random note. |
-| `rnoteat` | `string` | Unix timestamp (ms) of the stranger's scream. |
+| `rnoteat` | `number` | Unix timestamp (ms) of the stranger's scream. |
 
 ---
 
@@ -216,20 +212,10 @@ eas build --platform android --profile preview
 
 ---
 
-## Deploying the Worker
+## About the Worker
 
-The Cloudflare Worker lives in `action-trigger-worker/`. It requires two environment secrets set in the Cloudflare dashboard:
+**[Read here](https://github.com/RajnishKMehta/Scream2Wish/tree/main/action-trigger-worker#readme)**
 
-| Secret | Description |
-|--------|-------------|
-| `GITHUB_TOKEN` | A GitHub fine-grained token with `repo` write access to `Scream2Wish-wishes` |
-| `API_KEY` | The API key the app uses to authenticate with the Worker |
-
-```bash
-cd action-trigger-worker
-pnpm install
-pnpm dlx wrangler deploy
-```
 
 ---
 
@@ -268,4 +254,9 @@ Made with chaos and questionable priorities by [Rajnish Mehta](https://github.co
 [![Twitter](https://img.shields.io/badge/Twitter-RajnishKMehta-1DA1F2?logo=twitter)](https://twitter.com/RajnishKMehta)
 [![Instagram](https://img.shields.io/badge/Instagram-RajnishKMehta-E4405F?logo=instagram)](https://instagram.com/RajnishKMehta)
 
+<div align="center">
+  <a href="#top">
+    <img src="https://img.shields.io/badge/-Back%20to%20Top-0f2027?style=for-the-badge&logo=rocket" />
+  </a>
+</div>
 </div>
