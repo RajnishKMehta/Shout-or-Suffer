@@ -13,27 +13,23 @@ jobs:
     name: Expo Doctor Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      pull-requests: write
 
     steps:
-      # 1. Checkout
       - name: 📥 Checkout code
         uses: actions/checkout@v6
 
-      # 2. Node 24
       - name: ⬢ Setup Node.js 24
         uses: actions/setup-node@v4
         with:
           node-version: 24
 
-      # 3. pnpm (reads "packageManager" field from package.json)
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
-        # If package.json has "packageManager": "pnpm@x.y.z", no extra
-        # config needed. Otherwise uncomment the line below and pin a version:
-        # with:
-        #   version: 9
+        with:
+          version: latest
 
-      # 4. Cache pnpm store
       - name: 🗄️ Get pnpm store path
         id: pnpm-store
         run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
@@ -46,53 +42,121 @@ jobs:
           restore-keys: |
             pnpm-${{ runner.os }}-
 
-      # 5. Install deps
       - name: 📂 Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 6. Run expo-doctor and capture full output
-      - name: Run expo-doctor🩺
+      - name: 🩺 Run expo-doctor
         id: doctor
         shell: bash
         run: |
-          set +e   # don't exit immediately; we want to capture output first
-
+          set +e
           RAW=$(pnpm dlx expo-doctor@latest 2>&1)
           EXIT=$?
-
-          echo "$RAW"   # echo so it appears in the raw log
-
-          # ── store multi-line output for the next step ──
+          echo "$RAW"
           {
             echo "raw<<EOF_DOCTOR"
             echo "$RAW"
             echo "EOF_DOCTOR"
             echo "exit_code=$EXIT"
           } >> "$GITHUB_OUTPUT"
+          exit $EXIT
 
-          exit $EXIT   # propagate the real exit code → step fails if non-zero
-
-      # 7. Annotate the PR with the failure reasons
-      - name: ❌ Report issues
+      - name: 💬 Comment failure on PR
         if: failure() && steps.doctor.outputs.exit_code != '0'
-        shell: bash
-        run: |
-          RAW="${{ steps.doctor.outputs.raw }}"
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const raw = `${{ steps.doctor.outputs.raw }}`;
 
-          echo ""
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "  expo-doctor found the following issues"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            const issueLines = raw
+              .split('\n')
+              .filter(line => /✖|✗|✘|×|\[FAIL\]|error|warning|fix|issue|incompatible|mismatch|invalid|missing/i.test(line))
+              .map(line => `- ${line.trim()}`)
+              .join('\n');
 
-          # Print every failing line as a GitHub error annotation
-          while IFS= read -r line; do
-            # expo-doctor marks issues with ✖, ✗, ✘, ×, [FAIL], ERROR, or Warning
-            if echo "$line" | grep -qiE '(✖|✗|✘|×|\[FAIL\]|error|warning|fix|issue|incompatible|mismatch|invalid|missing)'; then
-              echo "::error::$line"
-            fi
-          done <<< "$RAW"
+            const body = [
+              '## 🩺 Expo Doctor — Issues Found',
+              '',
+              '> This PR has **expo-doctor** check failures. Fix these before merging.',
+              '',
+              '### ❌ Issues',
+              issueLines || '_Could not extract specific issues — see full output below._',
+              '',
+              '<details>',
+              '<summary>📋 Full expo-doctor output</summary>',
+              '',
+              '```',
+              raw,
+              '```',
+              '',
+              '</details>',
+              '',
+              `_Triggered by commit \`${{ github.event.pull_request.head.sha }}\`_`,
+            ].join('\n');
 
-          # Also dump the full output so nothing is lost
-          echo ""
-          echo "── Full expo-doctor output ──"
-          echo "$RAW"
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(
+              c => c.user.type === 'Bot' && c.body.includes('🩺 Expo Doctor')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      - name: ✅ Comment success on PR
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(
+              c => c.user.type === 'Bot' && c.body.includes('🩺 Expo Doctor')
+            );
+
+            const body = [
+              '## 🩺 Expo Doctor — All Checks Passed ✅',
+              '',
+              '> No issues found by expo-doctor.',
+              '',
+              `_Triggered by commit \`${{ github.event.pull_request.head.sha }}\`_`,
+            ].join('\n');
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
